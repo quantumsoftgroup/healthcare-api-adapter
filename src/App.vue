@@ -34,7 +34,9 @@ export default {
   },
   data: function() {
     return {
-      googleClientId: sessionStorage.getItem("googleClientId"),
+      googleClientId:
+        sessionStorage.getItem("googleClientId") ||
+        "570420945968-pmtd0sjm7mmf3i5m7ld09aos1op3qva1.apps.googleusercontent.com",
       googleOAuthToken: sessionStorage.getItem("googleOAuthToken")
     };
   },
