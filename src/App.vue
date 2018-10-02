@@ -1,59 +1,67 @@
 <template>
   <div id="app">
-    <DatasetPicker v-if="path==='/picker'" />
-    <DicomUploader v-else-if="path==='/uploader'" />
-    <div class="app-block" v-else>
+    <md-dialog class="gcp-picker" v-if="cmp==='picker'" :md-active="true">
+      <DatasetPicker :onSelect="onSelect" />
+    </md-dialog>
+    <md-dialog v-if="cmp==='uploader'">
+      <DicomUploader  :onSelect="cmp = ''" />
+    </md-dialog>
+    <div class="app-block">
       <h1 class="app-title">Web-components sandbox</h1>
       <div class="app-form">
         <label for="">Google Client App ID</label>
-        <input type="text" v-model="googleClientId">
+        <input type="text" v-model="googleClientId" />
         <button @click="saveCredentials">Save</button>
       </div>
 
       <button v-if="!googleOAuthToken" class="app-btn-login" :disabled="!googleClientId" @click="login">LOGIN</button>
       <button v-else class="app-btn-logout" @click="logout">LOGOUT</button>
 
-      <a class="app-ref" href="/picker">Dicomstore Picker</a>
-      <a class="app-ref" href="/uploader">DICOM files uploader</a>
+      <a class="app-ref" @click="cmp='picker'">Dicomstore Picker</a>
+      <a class="app-ref" @click="cmp='uploader'">DICOM files uploader</a>
     </div>
-
   </div>
 </template>
 
 <script>
-import DatasetPicker from "./web-components/DatasetPicker/DatasetPicker.vue";
-import DicomUploader from "./web-components/DicomUploader/DicomUploader.vue";
+import Vue from 'vue';
+import MdDialog from 'vue-material/dist/components/MdDialog';
+Vue.use(MdDialog);
+
+import DatasetPicker from './web-components/DatasetPicker/DatasetPicker.vue';
+import DicomUploader from './web-components/DicomUploader/DicomUploader.vue';
 
 /* eslint-disable */
 
 export default {
-  name: "app",
+  name: 'app',
   components: {
     DatasetPicker,
-    DicomUploader
+    DicomUploader,
   },
   data: function() {
     return {
       googleClientId:
-        sessionStorage.getItem("googleClientId") ||
-        "570420945968-pmtd0sjm7mmf3i5m7ld09aos1op3qva1.apps.googleusercontent.com",
-      googleOAuthToken: sessionStorage.getItem("googleOAuthToken")
+        sessionStorage.getItem('googleClientId') ||
+        '570420945968-pmtd0sjm7mmf3i5m7ld09aos1op3qva1.apps.googleusercontent.com',
+      googleOAuthToken: sessionStorage.getItem('googleOAuthToken'),
+      cmp: '',
     };
   },
   computed: {
     path: function() {
       return location.pathname;
-    }
+    },
   },
   mounted: function() {
     console.log(location);
-    if (location.pathname === "/_oauth/google" && location.hash) {
-      const pairsStr = location.hash.slice(1).split("&");
+    if (location.pathname === '/_oauth/google' && location.hash) {
+      const pairsStr = location.hash.slice(1).split('&');
       pairsStr.forEach(pairStr => {
-        const pair = pairStr.split("=");
-        if (pair[0] === "access_token") {
-          sessionStorage.setItem("googleOAuthToken", pair[1]);
-          location = "/";
+        const pair = pairStr.split('=');
+        if (pair[0] === 'access_token') {
+          sessionStorage.setItem('googleOAuthToken', pair[1]);
+          location = '/';
           return;
         }
       });
@@ -61,26 +69,27 @@ export default {
   },
   methods: {
     saveCredentials: function() {
-      sessionStorage.setItem("googleClientId", this.googleClientId);
+      sessionStorage.setItem('googleClientId', this.googleClientId);
     },
     login: function() {
-      const url = new URL("https://accounts.google.com/o/oauth2/v2/auth");
+      const url = new URL('https://accounts.google.com/o/oauth2/v2/auth');
       const params = {
         client_id: this.googleClientId,
-        redirect_uri: "http://localhost:8080/_oauth/google",
-        response_type: "token",
-        scope: "profile email openid"
+        redirect_uri: 'http://localhost:8080/_oauth/google',
+        response_type: 'token',
+        scope:
+          'profile email openid https://www.googleapis.com/auth/cloud-healthcare https://www.googleapis.com/auth/cloudplatformprojects.readonly',
+        flowName: 'GeneralOAuthFlow',
       };
-      Object.keys(params).forEach(key =>
-        url.searchParams.append(key, params[key])
-      );
+      Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
       location = url;
     },
-    login: function() {
-      sessionStorage.removeItem("googleOAuthToken");
-      location = url;
-    }
-  }
+    logout: function() {},
+    onSelect: function(data) {
+      alert(JSON.stringify(data, null, '  '));
+      this.cmp = '';
+    },
+  },
 };
 </script>
 
@@ -89,12 +98,10 @@ body
   font-family 'Avenir', Helvetica, Arial, sans-serif
   -webkit-font-smoothing antialiased
   -moz-osx-font-smoothing grayscale
-  background #151a1f
-  color white
-  margin-top 60px
+  margin 0
 #app
   .app-block
-    margin auto
+    margin 100px auto
     width 500px
   .app-ref
     display block

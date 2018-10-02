@@ -1,13 +1,4 @@
-import Vue from "vue";
-import VApp from "vuetify/es5/components/VApp";
-import Vuetify from "vuetify/es5/components/Vuetify";
-import transitions from "vuetify/es5/components/transitions";
-import directives from "vuetify/es5/directives";
+import Vue from 'vue';
+import MdButton from 'vue-material/dist/components/MdButton';
 
-Vue.use(Vuetify, {
-  components: {
-    VApp,
-    transitions
-  },
-  directives
-});
+Vue.use(MdButton);
