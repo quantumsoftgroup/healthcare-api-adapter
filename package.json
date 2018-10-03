@@ -1,18 +1,19 @@
 {
-  "name": "healthcare-api-adapter2",
+  "name": "healthcare-api-adapter",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --target wc-async --name gcp ./src/web-components/**/*.vue",
+    "build": "npm run build-components && npm run build-vue",
+    "build-components": "vue-cli-service build --target wc-async --modern --name gcp ./src/web-components/**/*.vue",
+    "build-vue": "webpack src/vue.js -o dist/vue.js",
     "lint": "vue-cli-service lint"
   },
   "main": "dist/gcp.js",
   "files": [
     "dist"
   ],
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.3",
     "@vue/cli-plugin-eslint": "^3.0.3",
@@ -24,7 +25,8 @@
     "vue": "^2.5.17",
     "vue-material": "^1.0.0-beta-10.2",
     "vue-template-compiler": "^2.5.17",
-    "vuex": "^3.0.1"
+    "vuex": "^3.0.1",
+    "webpack-cli": "^3.1.2"
   },
   "eslintConfig": {
     "root": true,
