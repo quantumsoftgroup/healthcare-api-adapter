@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "npm run build-components && npm run build-vue",
-    "build-components": "vue-cli-service build --target wc-async --modern --name gcp ./src/web-components/**/*.vue",
+    "build-components": "vue-cli-service build --target wc --name gcp ./src/web-components/**/*.vue",
     "build-vue": "webpack --mode production src/vue.js -o dist/vue.js",
     "lint": "vue-cli-service lint"
   },

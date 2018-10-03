@@ -10,8 +10,12 @@ import '../common.js';
 export default {
   name: 'DatasetPicker',
   props: {
-    onSelect: {
-      type: Function,
+    id: {
+      type: String,
+      required: true
+    },
+    event: {
+      type: String,
       required: true
     }
   },
@@ -21,10 +25,14 @@ export default {
   methods: {
     select: function() {
       const result = {
-        'qido-rs':
+        wadoUriRoot:
+          'https://healthcare.googleapis.com/v1alpha/projects/healthcare-api-215503/locations/us-central1/datasets/mydataset/dicomStores/mydicomstore/dicomWeb',
+        qidoRoot:
+          'https://healthcare.googleapis.com/v1alpha/projects/healthcare-api-215503/locations/us-central1/datasets/mydataset/dicomStores/mydicomstore/dicomWeb',
+        wadoRoot:
           'https://healthcare.googleapis.com/v1alpha/projects/healthcare-api-215503/locations/us-central1/datasets/mydataset/dicomStores/mydicomstore/dicomWeb'
       };
-      this.$props.onSelect(result);
+      window.$('#' + this.$props.id).trigger(this.$props.event, result);
     }
   }
 };
