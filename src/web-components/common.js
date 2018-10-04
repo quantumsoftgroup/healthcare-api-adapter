@@ -1,4 +1,16 @@
 import Vue from 'vue';
 import MdButton from 'vue-material/dist/components/MdButton';
+import MdCard from 'vue-material/dist/components/MdCard';
+import MdProgress from 'vue-material/dist/components/MdProgress';
+import MdContent from 'vue-material/dist/components/MdContent';
+import MdRipple from 'vue-material/dist/components/MdRipple';
+import MdTable from 'vue-material/dist/components/MdTable';
+import MdEmptyState from 'vue-material/dist/components/MdEmptyState';
 
 Vue.use(MdButton);
+Vue.use(MdContent);
+Vue.use(MdCard);
+Vue.use(MdProgress);
+Vue.use(MdRipple);
+Vue.use(MdEmptyState);
+Vue.use(MdTable);

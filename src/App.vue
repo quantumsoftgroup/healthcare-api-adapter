@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <md-dialog class="gcp-picker" v-if="cmp==='picker'" :md-active="true">
-      <DatasetPicker :onSelect="onSelect" />
+    <md-dialog class="gcp-picker-modal" v-if="cmp==='picker' || path === '/q'" :md-active="true">
+      <DatasetPicker :onSelect="onSelect" id="dicom-store-picker" event="on-select" :token="googleOAuthToken" />
     </md-dialog>
     <md-dialog v-if="cmp==='uploader'">
       <DicomUploader  :onSelect="cmp = ''" />
@@ -37,7 +37,7 @@ export default {
   name: 'app',
   components: {
     DatasetPicker,
-    DicomUploader,
+    DicomUploader
   },
   data: function() {
     return {
@@ -45,16 +45,15 @@ export default {
         sessionStorage.getItem('googleClientId') ||
         '570420945968-pmtd0sjm7mmf3i5m7ld09aos1op3qva1.apps.googleusercontent.com',
       googleOAuthToken: sessionStorage.getItem('googleOAuthToken'),
-      cmp: '',
+      cmp: ''
     };
   },
   computed: {
     path: function() {
       return location.pathname;
-    },
+    }
   },
   mounted: function() {
-    console.log(location);
     if (location.pathname === '/_oauth/google' && location.hash) {
       const pairsStr = location.hash.slice(1).split('&');
       pairsStr.forEach(pairStr => {
@@ -79,17 +78,19 @@ export default {
         response_type: 'token',
         scope:
           'profile email openid https://www.googleapis.com/auth/cloud-healthcare https://www.googleapis.com/auth/cloudplatformprojects.readonly',
-        flowName: 'GeneralOAuthFlow',
+        flowName: 'GeneralOAuthFlow'
       };
       Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
       location = url;
     },
-    logout: function() {},
+    logout: function() {
+      sessionStorage.removeItem('googleOAuthToken');
+    },
     onSelect: function(data) {
       alert(JSON.stringify(data, null, '  '));
       this.cmp = '';
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -114,4 +115,6 @@ body
       margin 5px
   .app-btn-login, .app-btn-logout
     margin 35px
+.md-dialog
+  background-color #161A1F !important
 </style>
