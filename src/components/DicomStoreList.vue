@@ -1,7 +1,22 @@
 <template>
-  <md-table v-model="stores" md-sort="name" md-sort-order="asc" md-card md-fixed-header>
+  <md-table v-model="filteredStores" md-sort="name" md-sort-order="asc" md-card md-fixed-header>
+
+    <md-table-toolbar>
+      <div class="md-toolbar-section-start">
+        <md-tabs>
+          <md-tab id="tab-home" md-label="Recent"></md-tab>
+          <md-tab id="tab-pages" md-label="All"></md-tab>
+        </md-tabs>
+      </div>
+
+      <md-field class="md-toolbar-section-end">
+        <md-input placeholder="Search..." v-model="search" />
+      </md-field>
+      <div class="gcp-black-line"></div>
+    </md-table-toolbar>
+    
     <md-table-empty-state :md-label="!loading && !error ? 'No stores found' : undefined">
-      <md-progress-spinner v-if="loading" md-mode="indeterminate"></md-progress-spinner>
+      <Spinner v-if="loading"/>
       <md-content v-if="error" class="md-accent">{{error}}</md-content>
     </md-table-empty-state>
 
@@ -15,8 +30,10 @@
 </template>
 
 <script>
+import Spinner from './Spinner.vue';
 export default {
   name: 'DicomStoreList',
+  components: { Spinner },
   filters: {
     dicomStoreName: function(store) {
       return store.split('/').splice(-1)[0];
@@ -31,7 +48,16 @@ export default {
       required: true
     }
   },
-  methods: {}
+  data: () => ({
+    search: ''
+  }),
+  computed: {
+    filteredStores: function() {
+      if (!this.search || !this.stores) return this.stores;
+      const str = this.search.toLowerCase();
+      return this.stores.filter(p => p.name.indexOf(str) >= 0);
+    }
+  }
 };
 </script>
 
