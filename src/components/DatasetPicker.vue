@@ -12,8 +12,8 @@ export default {
   name: 'DatasetPicker',
   components: { DatasetsList },
   props: {
-    projectId: {
-      type: String,
+    project: {
+      type: Object,
       required: true
     },
     onSelect: {
@@ -31,7 +31,7 @@ export default {
   },
   created: async function() {
     this.loading = true;
-    const locationsResponse = await api.loadLocations(this.projectId);
+    const locationsResponse = await api.loadLocations(this.project.projectId);
     if (locationsResponse.isError) {
       this.loading = false;
       this.error = locationsResponse.message;
@@ -43,7 +43,7 @@ export default {
       this.loading = false;
     }
     const locationsIds = this.locations.map(o => o.locationId);
-    const datasetsResponse = await api.loadDatasets(this.projectId, locationsIds);
+    const datasetsResponse = await api.loadDatasets(this.project.projectId, locationsIds);
     this.loading = false;
     if (datasetsResponse.isError) {
       this.error = datasetsResponse.message;

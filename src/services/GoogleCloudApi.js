@@ -11,7 +11,6 @@ class GoogleCloudApi {
   async doRequest(requestFunc) {
     try {
       const response = await requestFunc();
-      /* eslint-disable */
       if (response.status >= 200 && response.status < 300)
         return {
           isError: false,
@@ -29,7 +28,7 @@ class GoogleCloudApi {
         return {
           isError: true,
           status: err.status,
-          message: err.response.data.error.message
+          message: err.response.data.error.message || 'Unspecified error'
         };
       }
       return {

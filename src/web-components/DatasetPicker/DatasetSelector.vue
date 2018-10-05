@@ -1,22 +1,25 @@
 <template>
   <div class="gcp-picker">
-    <div class="gcp-picker--title">Selecting dataset</div>
-    <ProjectPicker v-if="!projectId" :onSelect="onProjectSelect"/>
-    <DatasetPicker v-if="projectId && !dataset" :projectId="projectId" :onSelect="onDatasetSelect"/>
-    <DicomStorePicker v-if="projectId && dataset" :dataset="dataset" :onSelect="onDicomStoreSelect"/>
+    <div class="gcp-picker--title">Google Cloud Healthcare API</div>
+    <StageIndicator :project="project" :dataset="dataset" />
+    <ProjectPicker v-if="!project" :onSelect="onProjectSelect"/>
+    <DatasetPicker v-if="project && !dataset" :project="project" :onSelect="onDatasetSelect"/>
+    <DicomStorePicker v-if="project && dataset" :dataset="dataset" :onSelect="onDicomStoreSelect"/>
   </div>
 </template>
 
 <script>
 import '../common.js';
 import api from '../../services/GoogleCloudApi';
+import StageIndicator from '../../components/StageIndicator.vue';
 import ProjectPicker from '../../components/ProjectPicker.vue';
 import DatasetPicker from '../../components/DatasetPicker.vue';
 import DicomStorePicker from '../../components/DicomStorePicker.vue';
 
 export default {
-  name: 'GcpPicker',
+  name: 'DatasetSelector',
   components: {
+    StageIndicator,
     ProjectPicker,
     DatasetPicker,
     DicomStorePicker
@@ -37,7 +40,7 @@ export default {
   },
   data: function() {
     return {
-      projectId: null,
+      project: null,
       dataset: null,
       unloading: false
     };
@@ -46,19 +49,19 @@ export default {
     api.setAuthToken(this.token);
   },
   methods: {
-    onProjectSelect(projectId) {
-      this.projectId = projectId;
+    onProjectSelect(project) {
+      this.project = project;
     },
     onDatasetSelect(dataset) {
       this.dataset = dataset;
     },
-    onDicomStoreSelect(dataset) {
+    onDicomStoreSelect(dicomStore) {
       if (this.unloading) return;
       this.unloading = true;
       const result = {
-        wadoUriRoot: `https://healthcare.googleapis.com/v1alpha/${dataset}/dicomWeb`,
-        qidoRoot: `https://healthcare.googleapis.com/v1alpha/${dataset}/dicomWeb`,
-        wadoRoot: `https://healthcare.googleapis.com/v1alpha/${dataset}/dicomWeb`
+        wadoUriRoot: `https://healthcare.googleapis.com/v1alpha/${dicomStore}/dicomWeb`,
+        qidoRoot: `https://healthcare.googleapis.com/v1alpha/${dicomStore}/dicomWeb`,
+        wadoRoot: `https://healthcare.googleapis.com/v1alpha/${dicomStore}/dicomWeb`
       };
       window.$('#' + this.$props.id).trigger(this.$props.event, result);
     }
@@ -70,6 +73,7 @@ export default {
 @import '../../../node_modules/vue-material/dist/vue-material.min.css'
 @import '../../../node_modules/vue-material/dist/theme/default-dark.css'
 @import url('https://fonts.googleapis.com/css?family=Roboto')
+@import '../../components/common.styl'
 
 .gcp-picker
   font-family 'Roboto', Helvetica, Arial, sans-serif

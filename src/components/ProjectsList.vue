@@ -5,10 +5,12 @@
       <md-content v-if="error" class="md-accent">{{error}}</md-content>
     </md-table-empty-state>
 
-    <md-table-row slot="md-table-row" slot-scope="{ item }" @click="onSelect(item.projectId)">
+    <md-table-row slot="md-table-row" slot-scope="{ item }" @click="onSelect(item)">
       <md-table-cell md-label="PROJECT">{{ item.name }}</md-table-cell>
       <md-table-cell md-label="ID">{{ item.projectId }}</md-table-cell>
-      <md-table-cell>&gt;</md-table-cell>
+      <md-table-cell class="gcp-arrow-cell">
+        <img src="../assets/arrow_right.svg" alt="">
+      </md-table-cell>
     </md-table-row>
   </md-table>
 </template>

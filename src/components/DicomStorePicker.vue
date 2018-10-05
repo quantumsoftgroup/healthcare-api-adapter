@@ -13,7 +13,7 @@ export default {
   components: { DicomStoreList },
   props: {
     dataset: {
-      type: String,
+      type: Object,
       required: true
     },
     onSelect: {
@@ -31,7 +31,7 @@ export default {
   },
   created: async function() {
     this.loading = true;
-    const response = await api.loadDicomStores(this.dataset);
+    const response = await api.loadDicomStores(this.dataset.name);
     this.loading = false;
     if (response.isError) {
       this.error = response.message;

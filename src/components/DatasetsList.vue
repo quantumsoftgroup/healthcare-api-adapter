@@ -5,9 +5,11 @@
       <md-content v-if="error" class="md-accent">{{error}}</md-content>
     </md-table-empty-state>
 
-    <md-table-row slot="md-table-row" slot-scope="{ item }" @click="onSelect(item.name)">
-      <md-table-cell md-label="DATASET">{{ item.name }}</md-table-cell>
-      <md-table-cell>&gt;</md-table-cell>
+    <md-table-row slot="md-table-row" slot-scope="{ item }" @click="onSelect(item)">
+      <md-table-cell md-label="DATASETS">{{ item.name | datasetName }}</md-table-cell>
+    <md-table-cell class="gcp-arrow-cell">
+      <img src="../assets/arrow_right.svg" alt="">
+    </md-table-cell>
     </md-table-row>
   </md-table>
 </template>
@@ -15,6 +17,11 @@
 <script>
 export default {
   name: 'DatasetsList',
+  filters: {
+    datasetName: function(dataset) {
+      return dataset.split('/').splice(-1)[0];
+    }
+  },
   props: {
     datasets: Array,
     loading: Boolean,

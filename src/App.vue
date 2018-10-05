@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <md-dialog class="gcp-picker-modal" v-if="cmp==='picker' || path === '/q'" :md-active="true">
-      <DatasetPicker :onSelect="onSelect" id="dicom-store-picker" event="on-select" :token="googleOAuthToken" />
+      <DatasetSelector :onSelect="onSelect" id="dicom-store-picker" event="on-select" :token="googleOAuthToken" />
     </md-dialog>
     <md-dialog v-if="cmp==='uploader'">
       <DicomUploader  :onSelect="cmp = ''" />
@@ -28,15 +28,16 @@ import Vue from 'vue';
 import MdDialog from 'vue-material/dist/components/MdDialog';
 Vue.use(MdDialog);
 
-import DatasetPicker from './web-components/DatasetPicker/DatasetPicker.vue';
+import DatasetSelector from './web-components/DatasetPicker/DatasetSelector.vue';
 import DicomUploader from './web-components/DicomUploader/DicomUploader.vue';
 
 /* eslint-disable */
+window.$ = () => (location = '/');
 
 export default {
   name: 'app',
   components: {
-    DatasetPicker,
+    DatasetSelector,
     DicomUploader
   },
   data: function() {

@@ -6,8 +6,10 @@
     </md-table-empty-state>
 
     <md-table-row slot="md-table-row" slot-scope="{ item }" @click="onSelect(item.name)">
-      <md-table-cell md-label="STORE">{{ item.name }}</md-table-cell>
-      <md-table-cell>&gt;</md-table-cell>
+      <md-table-cell md-label="DICOM STORES">{{ item.name | dicomStoreName }}</md-table-cell>
+      <md-table-cell class="gcp-arrow-cell">
+        <img src="../assets/arrow_right.svg" alt="">
+      </md-table-cell>
     </md-table-row>
   </md-table>
 </template>
@@ -15,6 +17,11 @@
 <script>
 export default {
   name: 'DicomStoreList',
+  filters: {
+    dicomStoreName: function(store) {
+      return store.split('/').splice(-1)[0];
+    }
+  },
   props: {
     stores: Array,
     loading: Boolean,
