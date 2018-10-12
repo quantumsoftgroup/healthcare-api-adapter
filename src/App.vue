@@ -1,10 +1,10 @@
 <template>
   <div id="app">
-    <md-dialog class="gcp-picker-modal" v-if="cmp==='picker' || path === '/q'" :md-active="true">
-      <DatasetSelector :onSelect="onSelect" id="dicom-store-picker" event="on-select" :token="googleOAuthToken" />
+    <md-dialog class="gcp-picker-modal" v-if="path === '/picker'" :md-active="true">
+      <DatasetSelector :onSelect="onSelect" id="dicom-store-picker" event="on-select" :token="googleOAuthToken"/>
     </md-dialog>
-    <md-dialog v-if="cmp==='uploader'">
-      <DicomUploader  :onSelect="cmp = ''" />
+    <md-dialog v-if="path === '/uploader'"  :md-active="true">
+      <DicomUploader :token="googleOAuthToken" :url="stowRsUrl"/>
     </md-dialog>
     <div class="app-block">
       <h1 class="app-title">Web-components sandbox</h1>
@@ -17,8 +17,8 @@
       <button v-if="!googleOAuthToken" class="app-btn-login" :disabled="!googleClientId" @click="login">LOGIN</button>
       <button v-else class="app-btn-logout" @click="logout">LOGOUT</button>
 
-      <a class="app-ref" @click="cmp='picker'">Dicomstore Picker</a>
-      <a class="app-ref" @click="cmp='uploader'">DICOM files uploader</a>
+      <a class="app-ref" @click="path = '/picker'">Dicomstore Picker</a>
+      <a class="app-ref" @click="path = '/uploader'">DICOM files uploader</a>
     </div>
   </div>
 </template>
@@ -31,9 +31,6 @@ Vue.use(MdDialog);
 import DatasetSelector from './web-components/DatasetPicker/DatasetSelector.vue';
 import DicomUploader from './web-components/DicomUploader/DicomUploader.vue';
 
-/* eslint-disable */
-window.$ = () => (location = '/');
-
 export default {
   name: 'app',
   components: {
@@ -42,17 +39,32 @@ export default {
   },
   data: function() {
     return {
+      foo: 1, // durty hack to make things updated. No idea, why $forceUpdate() didn't work out
       googleClientId:
         sessionStorage.getItem('googleClientId') ||
         '570420945968-pmtd0sjm7mmf3i5m7ld09aos1op3qva1.apps.googleusercontent.com',
       googleOAuthToken: sessionStorage.getItem('googleOAuthToken'),
-      cmp: ''
+      stowRsUrl:
+        '/v1alpha/projects/healthcare-api-215503/locations/us-central1/datasets/anton1/dicomStores/store1/dicomWeb'
     };
   },
   computed: {
-    path: function() {
-      return location.pathname;
+    path: {
+      get: function() {
+        if (this.foo) return location.pathname;
+      },
+      set: function(value) {
+        history.pushState(null, '', value);
+        this.foo += 1;
+      }
     }
+  },
+  created: function() {
+    /* eslint-disable */
+    window.$ = result => {
+      console.log(result);
+      location.replace('/');
+    };
   },
   mounted: function() {
     if (location.pathname === '/_oauth/google' && location.hash) {

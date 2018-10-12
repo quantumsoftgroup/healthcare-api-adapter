@@ -1,16 +1,29 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
+    <p>Directory: <input type="file" webkitdirectory mozdirectory @change="selectDirectory($event.target.files)"/></p>
   </div>
 </template>
 
 <script>
-import "../common.js";
-
+import '../common.js';
+import dicomUploader from '../../services/DicomUploadService';
 export default {
-  name: "DicomUploader",
+  name: 'DicomUploader',
   props: {
-    msg: String
+    token: {
+      type: String,
+      required: true
+    },
+    url: {
+      type: String,
+      required: true
+    }
+  },
+  methods: {
+    selectDirectory: function(files) {
+      /* eslint-disable */
+      dicomUploader.smartUpload(files, this.url, this.token);
+    }
   }
 };
 </script>

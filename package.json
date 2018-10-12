@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "start": "vue-cli-service serve",
     "build": "npm run build-components && npm run build-vue",
     "build-components": "vue-cli-service build --target wc --name gcp ./src/web-components/**/*.vue",
     "build-vue": "webpack --mode production src/vue.js -o dist/vue.js",
@@ -19,6 +19,7 @@
     "@vue/cli-service": "^3.0.3",
     "@vue/eslint-config-prettier": "^3.0.3",
     "axios": "^0.18.0",
+    "dicomweb-client": "^0.3.2",
     "lint-staged": "^7.2.2",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
