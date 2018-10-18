@@ -4,7 +4,7 @@
       <DatasetSelector :onSelect="onSelect" id="dicom-store-picker" event="on-select" :token="googleOAuthToken"/>
     </md-dialog>
     <md-dialog v-if="path === '/uploader'"  :md-active="true">
-      <DicomUploader :token="googleOAuthToken" :url="stowRsUrl"/>
+      <DicomUploader :token="googleOAuthToken" :url="stowRsUrl" :onClose="onClose"/>
     </md-dialog>
     <div class="app-block">
       <h1 class="app-title">Web-components sandbox</h1>
@@ -45,7 +45,7 @@ export default {
         '570420945968-pmtd0sjm7mmf3i5m7ld09aos1op3qva1.apps.googleusercontent.com',
       googleOAuthToken: sessionStorage.getItem('googleOAuthToken'),
       stowRsUrl:
-        '/v1alpha/projects/healthcare-api-215503/locations/us-central1/datasets/anton1/dicomStores/store1/dicomWeb'
+        'https://healthcare.googleapis.com/v1alpha/projects/healthcare-api-215503/locations/us-central1/datasets/anton1/dicomStores/store2/dicomWeb'
     };
   },
   computed: {
@@ -102,11 +102,14 @@ export default {
     onSelect: function(data) {
       alert(JSON.stringify(data, null, '  '));
       this.cmp = '';
+    },
+    onClose: function() {
+      location = '/';
     }
   }
 };
 </script>
-
+  
 <style lang="stylus">
 body
   font-family 'Avenir', Helvetica, Arial, sans-serif

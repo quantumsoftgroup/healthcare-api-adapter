@@ -7,6 +7,7 @@ import MdTable from 'vue-material/dist/components/MdTable';
 import MdEmptyState from 'vue-material/dist/components/MdEmptyState';
 import MdField from 'vue-material/dist/components/MdField';
 import MdTabs from 'vue-material/dist/components/MdTabs';
+import MdProgress from 'vue-material/dist/components/MdProgress';
 
 Vue.use(MdButton);
 Vue.use(MdContent);
@@ -16,3 +17,4 @@ Vue.use(MdEmptyState);
 Vue.use(MdTable);
 Vue.use(MdField);
 Vue.use(MdTabs);
+Vue.use(MdProgress);
