@@ -1,11 +1,28 @@
 import axios from 'axios';
+import { getOidcToken } from '../utils/helpers';
 
 class GoogleCloudApi {
-  setAuthToken(token) {
+  constructor() {
     this.api = axios.create({
-      timeout: 15000,
-      headers: { Authorization: 'Bearer ' + token }
+      timeout: 15000
     });
+  }
+
+  setOidcStorageKey(oidcStorageKey) {
+    /* eslint-disable */
+    if (!oidcStorageKey) console.error('OIDC storage key is empty');
+    this.oidcStorageKey = oidcStorageKey;
+  }
+
+  get axiosConfig() {
+    if (!this.oidcStorageKey) throw new Error('OIDC storage key is not set');
+    const accessToken = getOidcToken(this.oidcStorageKey);
+    if (!accessToken) throw new Error('OIDC access_token is not set');
+    return {
+      headers: {
+        Authorization: 'Bearer ' + accessToken
+      }
+    };
   }
 
   async doRequest(requestFunc) {
@@ -40,13 +57,16 @@ class GoogleCloudApi {
 
   async loadProjects() {
     return this.doRequest(() =>
-      this.api.get('https://cloudresourcemanager.googleapis.com/v1/projects')
+      this.api.get('https://cloudresourcemanager.googleapis.com/v1/projects', this.axiosConfig)
     );
   }
 
   async loadLocations(projectId) {
     return this.doRequest(() =>
-      this.api.get(`https://healthcare.googleapis.com/v1alpha/projects/${projectId}/locations`)
+      this.api.get(
+        `https://healthcare.googleapis.com/v1alpha/projects/${projectId}/locations`,
+        this.axiosConfig
+      )
     );
   }
 
@@ -54,7 +74,8 @@ class GoogleCloudApi {
     const promises = locationsIds.map(locationId =>
       this.doRequest(() =>
         this.api.get(
-          `https://healthcare.googleapis.com/v1alpha/projects/${projectId}/locations/${locationId}/datasets`
+          `https://healthcare.googleapis.com/v1alpha/projects/${projectId}/locations/${locationId}/datasets`,
+          this.axiosConfig
         )
       )
     );
@@ -75,7 +96,10 @@ class GoogleCloudApi {
 
   async loadDicomStores(dataset) {
     return this.doRequest(() =>
-      this.api.get(`https://healthcare.googleapis.com/v1alpha/${dataset}/dicomStores`)
+      this.api.get(
+        `https://healthcare.googleapis.com/v1alpha/${dataset}/dicomStores`,
+        this.axiosConfig
+      )
     );
   }
 }

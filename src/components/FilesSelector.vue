@@ -23,20 +23,24 @@ export default {
 };
 </script>
 
-<style lang="stylus">
-.gcp-files-selector
-  display flex
-  justify-content space-between
-.gcp-files-selector__btn
-  background-color #52ABD3 !important
-  height 70px !important
-  width 220px !important
-  font-size 14px
-  border-radius 8px
-.gcp-invisible-input
-  position absolute
-  display none
-  z-index -1000
-  max-width 0 !important
-  max-height 0 !important
+
+<style>
+.gcp-files-selector {
+  display: flex;
+  justify-content: space-between;
+}
+.gcp-files-selector__btn {
+  background-color: #52abd3 !important;
+  height: 70px !important;
+  width: 220px !important;
+  font-size: 14px;
+  border-radius: 8px;
+}
+.gcp-invisible-input {
+  position: absolute;
+  display: none;
+  z-index: -1000;
+  max-width: 0 !important;
+  max-height: 0 !important;
+}
 </style>

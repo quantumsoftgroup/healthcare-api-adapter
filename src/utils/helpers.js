@@ -17,3 +17,8 @@ export function httpErrorToStr(error) {
   }
   return error.message || 'Unknown error.';
 }
+
+export function getOidcToken(oidcStorageKey) {
+  const oidcConfigStr = sessionStorage.getItem(oidcStorageKey);
+  if (oidcConfigStr) return JSON.parse(oidcConfigStr).access_token;
+}

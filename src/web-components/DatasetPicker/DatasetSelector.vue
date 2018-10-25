@@ -33,7 +33,7 @@ export default {
       type: String,
       required: true
     },
-    token: {
+    oidcKey: {
       type: String,
       required: true
     }
@@ -46,7 +46,7 @@ export default {
     };
   },
   created: function() {
-    api.setAuthToken(this.token);
+    api.setOidcStorageKey(this.oidcKey);
   },
   methods: {
     onProjectSelect(project) {

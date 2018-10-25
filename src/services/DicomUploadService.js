@@ -1,7 +1,13 @@
-import { httpErrorToStr } from '../utils/helpers';
+import { httpErrorToStr, getOidcToken } from '../utils/helpers';
 const DICOM = require('dicomweb-client');
 
 class DicomUploadService {
+  setOidcStorageKey(oidcStorageKey) {
+    /* eslint-disable */
+    if (!oidcStorageKey) console.error('OIDC storage key is empty');
+    this.oidcStorageKey = oidcStorageKey;
+  }
+
   async smartUpload(files, url, authToken, uploadCallback, cancellationToken) {
     /* eslint-disable */
     const CHUNK_SIZE = 1;
@@ -47,10 +53,7 @@ class DicomUploadService {
     /* eslint-disable */
     files = Array.from(files);
     if (files.length === 0) return;
-    const client = new DICOM.api.DICOMwebClient({
-      url,
-      headers: { Authorization: 'Bearer ' + authToken }
-    });
+    const client = this.getClient(url);
     const loadedFiles = await Promise.all(Array.from(files).map(f => this.readFile(f)));
     const contents = loadedFiles.map(f => f.content);
     await client.storeInstances({ datasets: contents });
@@ -71,6 +74,16 @@ class DicomUploadService {
       reader.readAsArrayBuffer(file);
     });
     return promise;
+  }
+
+  getClient(url) {
+    if (!this.oidcStorageKey) throw new Error('OIDC storage key is not set');
+    const accessToken = getOidcToken(this.oidcStorageKey);
+    if (!accessToken) throw new Error('OIDC access_token is not set');
+    return new DICOM.api.DICOMwebClient({
+      url,
+      headers: { Authorization: 'Bearer ' + accessToken }
+    });
   }
 }
 

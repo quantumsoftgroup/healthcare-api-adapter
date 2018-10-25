@@ -1,10 +1,10 @@
 <template>
   <div id="app">
     <md-dialog class="gcp-picker-modal" v-if="path === '/picker'" :md-active="true">
-      <DatasetSelector :onSelect="onSelect" id="dicom-store-picker" event="on-select" :token="googleOAuthToken"/>
+      <DatasetSelector id="dicom-store-picker" event="onSelect" oidc-key="googleOAuthToken"/>
     </md-dialog>
     <md-dialog v-if="path === '/uploader'"  :md-active="true">
-      <DicomUploader :token="googleOAuthToken" :url="stowRsUrl" :onClose="onClose"/>
+      <DicomUploader id="dicom-uploader" oidc-key="googleOAuthToken" :url="stowRsUrl" event="onClose"/>
     </md-dialog>
     <div class="app-block">
       <h1 class="app-title">Web-components sandbox</h1>
@@ -14,7 +14,7 @@
         <button @click="saveCredentials">Save</button>
       </div>
 
-      <button v-if="!googleOAuthToken" class="app-btn-login" :disabled="!googleClientId" @click="login">LOGIN</button>
+      <button v-if="!isLoggedIn" class="app-btn-login" :disabled="!googleClientId" @click="login">LOGIN</button>
       <button v-else class="app-btn-logout" @click="logout">LOGOUT</button>
 
       <a class="app-ref" @click="path = '/picker'">Dicomstore Picker</a>
@@ -43,12 +43,14 @@ export default {
       googleClientId:
         sessionStorage.getItem('googleClientId') ||
         '570420945968-pmtd0sjm7mmf3i5m7ld09aos1op3qva1.apps.googleusercontent.com',
-      googleOAuthToken: sessionStorage.getItem('googleOAuthToken'),
       stowRsUrl:
         'https://healthcare.googleapis.com/v1alpha/projects/healthcare-api-215503/locations/us-central1/datasets/anton1/dicomStores/store2/dicomWeb'
     };
   },
   computed: {
+    isLoggedIn: function() {
+      return !!sessionStorage.getItem('googleOAuthToken');
+    },
     path: {
       get: function() {
         if (this.foo) return location.pathname;
@@ -72,7 +74,7 @@ export default {
       pairsStr.forEach(pairStr => {
         const pair = pairStr.split('=');
         if (pair[0] === 'access_token') {
-          sessionStorage.setItem('googleOAuthToken', pair[1]);
+          sessionStorage.setItem('googleOAuthToken', JSON.stringify({ access_token: pair[1] }));
           location = '/';
           return;
         }
@@ -98,13 +100,6 @@ export default {
     },
     logout: function() {
       sessionStorage.removeItem('googleOAuthToken');
-    },
-    onSelect: function(data) {
-      alert(JSON.stringify(data, null, '  '));
-      this.cmp = '';
-    },
-    onClose: function() {
-      location = '/';
     }
   }
 };

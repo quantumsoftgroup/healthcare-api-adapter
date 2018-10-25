@@ -7,7 +7,9 @@
         <div class="gcp-dicom-uploader__uploading">
           {{status}}
           <span v-if="percents">{{percents}}%</span>
-          <img class="gcp-dicom-uploader__exit" src="./Icon-24px-Close.svg" @click="onCloseClick">         
+          <div class="gcp-dicom-uploader__exit" @click="onCloseClick">
+            <CloseIcon />
+          </div>
         </div>
       </div>
       <div class="gcp-dicom-uploader__progress_block">
@@ -39,12 +41,17 @@ import UploaderFilesList from '../../components/UploaderFilesList';
 import dicomUploader from '../../services/DicomUploadService';
 import CancellationToken from '../../utils/CancellationToken';
 import { formatFileSize } from '../../utils/helpers';
+import CloseIcon from './Icon-24px-Close.svg';
 
 export default {
   name: 'DicomUploader',
-  components: { FilesSelector, UploaderFilesList },
+  components: { FilesSelector, UploaderFilesList, CloseIcon },
   props: {
-    token: {
+    id: {
+      type: String,
+      required: true
+    },
+    event: {
       type: String,
       required: true
     },
@@ -52,8 +59,8 @@ export default {
       type: String,
       required: true
     },
-    onClose: {
-      type: Function,
+    oidcKey: {
+      type: String,
       required: true
     }
   },
@@ -93,6 +100,9 @@ export default {
     buttonCaption: function() {
       return this.isFinished ? 'Close' : 'Cancel';
     }
+  },
+  created: function() {
+    dicomUploader.setOidcStorageKey(this.oidcKey);
   },
   methods: {
     onSelectFiles: function(files) {
@@ -150,12 +160,20 @@ export default {
       else {
         this.cancellationToken.set(true);
       }
+    },
+    onClose() {
+      window.$('#' + this.$props.id).trigger(this.$props.event);
     }
   }
 };
 </script>
 
 <style lang="stylus">
+@import '../../../node_modules/vue-material/dist/vue-material.min.css'
+@import '../../../node_modules/vue-material/dist/theme/default-dark.css'
+@import url('https://fonts.googleapis.com/css?family=Roboto')
+@import '../../components/common.styl'
+
 .gcp-dicom-uploader
   font-family 'Roboto', Helvetica, Arial, sans-serif
   box-sizing border-box
@@ -166,10 +184,6 @@ export default {
 .gcp-dicom-uploader__exit
   cursor pointer
   float right
-  padding-left 5px
-  padding-bottom 5px
-  &:hover
-    filter brightness(150%)
 .gcp-dicom-uploader__uploading
   margin 5px 0 20px
   font-size 16px
@@ -195,6 +209,8 @@ export default {
 .gcp-dicom-uploader__volume
   padding-left 10px
   opacity 0.5
+.gcp-dicom-uploader__bottom
+  height 50px
 .gcp-dicom-uploader__cancel-btn
   background-color #52ABD3 !important
   float right
