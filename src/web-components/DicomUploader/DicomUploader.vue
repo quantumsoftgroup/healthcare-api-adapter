@@ -1,15 +1,12 @@
 <template>
   <div class="gcp-dicom-uploader">
-    <div class="gcp-dicom-uploader__exit"></div>
     <FilesSelector v-if="files == null" :onSelect="onSelectFiles"/>
     <div v-else>
       <div class="gcp-dicom-uploader__top">
         <div class="gcp-dicom-uploader__uploading">
           {{status}}
           <span v-if="percents">{{percents}}%</span>
-          <div class="gcp-dicom-uploader__exit" @click="onCloseClick">
-            <CloseIcon />
-          </div>
+          <SvgIcon class="gcp-dicom-uploader__exit" :icon="require('./Icon-24px-Close.svg')" @click.native="onCloseClick"/>
         </div>
       </div>
       <div class="gcp-dicom-uploader__progress_block">
@@ -36,16 +33,16 @@
 
 <script>
 import '../common.js';
+import SvgIcon from '../../components/SvgIcon';
 import FilesSelector from '../../components/FilesSelector';
 import UploaderFilesList from '../../components/UploaderFilesList';
 import dicomUploader from '../../services/DicomUploadService';
 import CancellationToken from '../../utils/CancellationToken';
 import { formatFileSize } from '../../utils/helpers';
-import CloseIcon from './Icon-24px-Close.svg';
 
 export default {
   name: 'DicomUploader',
-  components: { FilesSelector, UploaderFilesList, CloseIcon },
+  components: { FilesSelector, UploaderFilesList, SvgIcon },
   props: {
     id: {
       type: String,
@@ -184,6 +181,8 @@ export default {
 .gcp-dicom-uploader__exit
   cursor pointer
   float right
+  width 14px
+  height 14px
 .gcp-dicom-uploader__uploading
   margin 5px 0 20px
   font-size 16px

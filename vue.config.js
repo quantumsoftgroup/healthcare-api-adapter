@@ -1,114 +1,16 @@
-// module.exports = {
-//   chainWebpack: config => {
-//     const svgRule = config.module.rule('svg');
-//     svgRule.uses.clear();
-//     svgRule
-//       .use('vue-svg-loader')
-//       .loader('vue-svg-loader')
-//       .options({
-//         svgo: {
-//           plugins: [
-//             {
-//               cleanupAttrs: false
-//             },
-//             {
-//               removeDoctype: true
-//             },
-//             {
-//               removeXMLProcInst: true
-//             },
-//             {
-//               removeComments: true
-//             },
-//             {
-//               removeMetadata: true
-//             },
-//             {
-//               removeTitle: true
-//             },
-//             {
-//               removeDesc: true
-//             },
-//             {
-//               removeUselessDefs: false
-//             },
-//             {
-//               removeEditorsNSData: false
-//             },
-//             {
-//               removeEmptyAttrs: false
-//             },
-//             {
-//               removeHiddenElems: false
-//             },
-//             {
-//               removeEmptyText: false
-//             },
-//             {
-//               removeEmptyContainers: false
-//             },
-//             {
-//               removeViewBox: false
-//             },
-//             {
-//               cleanupEnableBackground: false
-//             },
-//             {
-//               convertStyleToAttrs: false
-//             },
-//             {
-//               convertColors: false
-//             },
-//             {
-//               convertPathData: false
-//             },
-//             {
-//               convertTransform: false
-//             },
-//             {
-//               removeUnknownsAndDefaults: false
-//             },
-//             {
-//               removeNonInheritableGroupAttrs: false
-//             },
-//             {
-//               removeUselessStrokeAndFill: false
-//             },
-//             {
-//               removeUnusedNS: false
-//             },
-//             {
-//               cleanupIDs: true
-//             },
-//             {
-//               cleanupNumericValues: false
-//             },
-//             {
-//               moveElemsAttrsToGroup: false
-//             },
-//             {
-//               moveGroupAttrsToElems: false
-//             },
-//             {
-//               collapseGroups: false
-//             },
-//             {
-//               removeRasterImages: false
-//             },
-//             {
-//               mergePaths: false
-//             },
-//             {
-//               convertShapeToPath: false
-//             },
-//             {
-//               sortAttrs: false
-//             },
-//             {
-//               removeDimensions: false
-//             }
-//           ]
-//         }
-//       });
-//   }
-// };
+module.exports = {
+  chainWebpack: config => {
+    const svgRule = config.module.rule('svg');
+
+    // clear all existing loaders.
+    // if you don't do this, the loader below will be appended to
+    // existing loaders of the rule.
+    svgRule.uses.clear();
+
+    // add replacement loader(s)
+    svgRule
+      .use('raw-loader')
+      .loader('raw-loader')
+      .end();
+  }
+};
