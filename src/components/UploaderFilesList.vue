@@ -1,5 +1,5 @@
 <template>
-  <md-content class="gcp-uploader-files-list md-scrollbar">
+  <md-content :class="['gcp-uploader-files-list', 'md-scrollbar', {'gcp-hidden': isHidden}]">
     <div :class="['gcp-uploader-files__item', {'gcp-uploader-files__error': file.error}]" 
       v-for="file in files" :key="file.id">
       <div class="gcp-uploader-files__item-text">{{file.path}}</div>
@@ -14,7 +14,8 @@
 export default {
   name: 'UploaderFilesList',
   props: {
-    files: Array
+    files: Array,
+    isHidden: Boolean
   }
 };
 </script>

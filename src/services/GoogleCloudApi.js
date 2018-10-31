@@ -1,47 +1,45 @@
-import axios from 'axios';
 import { getOidcToken } from '../utils/helpers';
 
 class GoogleCloudApi {
-  constructor() {
-    this.api = axios.create({
-      timeout: 15000
-    });
-  }
-
   setOidcStorageKey(oidcStorageKey) {
-    /* eslint-disable */
     if (!oidcStorageKey) console.error('OIDC storage key is empty');
     this.oidcStorageKey = oidcStorageKey;
   }
 
-  get axiosConfig() {
+  get fetchConfig() {
     if (!this.oidcStorageKey) throw new Error('OIDC storage key is not set');
     const accessToken = getOidcToken(this.oidcStorageKey);
     if (!accessToken) throw new Error('OIDC access_token is not set');
     return {
+      method: 'GET',
       headers: {
         Authorization: 'Bearer ' + accessToken
       }
     };
   }
 
-  async doRequest(requestFunc) {
+  async doRequest(url, config = {}) {
+    let data = null;
+    let response = null;
     try {
-      const response = await requestFunc();
-      if (response.status >= 200 && response.status < 300)
+      const response = await fetch(url, { ...this.fetchConfig, config });
+      try {
+        data = await response.json();
+      } catch (err) {}
+      if (response.status >= 200 && response.status < 300 && data != null)
         return {
           isError: false,
           status: response.status,
-          data: response.data
+          data: data
         };
       else
         return {
           isError: true,
           status: response.status,
-          message: (response.data && response.data.message) || 'Unknown error'
+          message: (data && data.error && data.error.message) || 'Unknown error'
         };
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.error) {
+      if (data && data.error) {
         return {
           isError: true,
           status: err.status,
@@ -56,27 +54,19 @@ class GoogleCloudApi {
   }
 
   async loadProjects() {
-    return this.doRequest(() =>
-      this.api.get('https://cloudresourcemanager.googleapis.com/v1/projects', this.axiosConfig)
-    );
+    return this.doRequest('https://cloudresourcemanager.googleapis.com/v1/projects');
   }
 
   async loadLocations(projectId) {
-    return this.doRequest(() =>
-      this.api.get(
-        `https://healthcare.googleapis.com/v1alpha/projects/${projectId}/locations`,
-        this.axiosConfig
-      )
+    return this.doRequest(
+      `https://healthcare.googleapis.com/v1alpha/projects/${projectId}/locations`
     );
   }
 
   async loadDatasets(projectId, locationsIds) {
     const promises = locationsIds.map(locationId =>
-      this.doRequest(() =>
-        this.api.get(
-          `https://healthcare.googleapis.com/v1alpha/projects/${projectId}/locations/${locationId}/datasets`,
-          this.axiosConfig
-        )
+      this.doRequest(
+        `https://healthcare.googleapis.com/v1alpha/projects/${projectId}/locations/${locationId}/datasets`
       )
     );
     return Promise.all(promises).then(replies => {
@@ -95,12 +85,7 @@ class GoogleCloudApi {
   }
 
   async loadDicomStores(dataset) {
-    return this.doRequest(() =>
-      this.api.get(
-        `https://healthcare.googleapis.com/v1alpha/${dataset}/dicomStores`,
-        this.axiosConfig
-      )
-    );
+    return this.doRequest(`https://healthcare.googleapis.com/v1alpha/${dataset}/dicomStores`);
   }
 }
 

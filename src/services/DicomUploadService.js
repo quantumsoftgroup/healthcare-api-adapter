@@ -1,4 +1,4 @@
-import { httpErrorToStr, getOidcToken } from '../utils/helpers';
+import { httpErrorToStr, getOidcToken, checkDicomFile } from '../utils/helpers';
 const DICOM = require('dicomweb-client');
 
 class DicomUploadService {
@@ -10,7 +10,7 @@ class DicomUploadService {
 
   async smartUpload(files, url, authToken, uploadCallback, cancellationToken) {
     /* eslint-disable */
-    const CHUNK_SIZE = 1;
+    const CHUNK_SIZE = 1; // Only one file per request is supported so far
     const MAX_PARALLEL_JOBS = 50; // FIXME: tune MAX_PARALLEL_JOBS number
     //
     let filesArray = Array.from(files);
@@ -26,9 +26,10 @@ class DicomUploadService {
         if (cancellationToken.get()) return;
         let chunk = filesArray.slice(0, CHUNK_SIZE);
         filesArray = filesArray.slice(CHUNK_SIZE);
-        const error = null;
+        let error = null;
         try {
-          await this.simpleUpload(chunk, url, authToken);
+          if (chunk.length > 1) throw new Error('Not implemented');
+          if (chunk.length === 1) await this.simpleUpload(chunk[0], url, authToken);
         } catch (err) {
           // It looks like a stupid bug of Babel that err is not an actual Exception object
           error = httpErrorToStr(err);
@@ -49,14 +50,13 @@ class DicomUploadService {
     });
   }
 
-  async simpleUpload(files, url, authToken) {
+  async simpleUpload(file, url, authToken) {
     /* eslint-disable */
-    files = Array.from(files);
-    if (files.length === 0) return;
     const client = this.getClient(url);
-    const loadedFiles = await Promise.all(Array.from(files).map(f => this.readFile(f)));
-    const contents = loadedFiles.map(f => f.content);
-    await client.storeInstances({ datasets: contents });
+    const loadedFile = await this.readFile(file);
+    const content = loadedFile.content;
+    if (!checkDicomFile(content)) throw new Error('The file has a wrong DICOM header');
+    await client.storeInstances({ datasets: [content] });
   }
 
   readFile(file) {

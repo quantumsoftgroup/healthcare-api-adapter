@@ -9,11 +9,16 @@
           <SvgIcon class="gcp-dicom-uploader__exit" :icon="require('./Icon-24px-Close.svg')" @click.native="onCloseClick"/>
         </div>
       </div>
-      <div class="gcp-dicom-uploader__progress_block">
+      <div :class="['gcp-dicom-uploader__progress_block', {'gcp-has-error': errorsCount && isFilesListHidden}]" @click="isFilesListHidden = !isFilesListHidden">
         <md-progress-bar class="gcp-dicom-uploader__progress" md-mode="determinate" :md-value="percents"/>
         <div class="gcp-dicom-uploader__status">
           <div class="gcp-dicom-uploader__status-left">
-            {{lastFile}} 
+            <div class="gcp-status-icon">
+              <SvgIcon v-if="errorsCount" class="gcp-error-icon" :icon="require('./Icon-Warn.svg')"/>
+              <SvgIcon v-else :icon="require('./Icon-Arrow.svg')" :class="{'gcp-icon-turned': !isFilesListHidden}"/>
+            </div>
+            <span class="gcp-dicom-uploader__error-message">{{errorsMessage}}</span>
+            <span class="gcp-last-file">{{lastFile}}</span>
             <span class="gcp-dicom-uploader__volume">
               {{volumeLeft}}
             </span>
@@ -23,7 +28,7 @@
           </div>
         </div>
       </div>
-      <UploaderFilesList :files="uploadedList"/>
+      <UploaderFilesList :files="uploadedList" :isHidden="isFilesListHidden"/>
       <div class="gcp-dicom-uploader__bottom">
         <md-button class="md-raised gcp-dicom-uploader__cancel-btn" @click="onButtonClick">{{buttonCaption}}</md-button>
       </div>
@@ -64,12 +69,13 @@ export default {
   data: () => ({
     status: 'Uploading...',
     isCancelled: false,
+    errorsCount: 0,
     files: null,
     uploadedVolume: null,
     wholeVolumeStr: null,
-    speed: null,
+    isFilesListHidden: true,
     timeLeft: null,
-    uploadedList: null,
+    uploadedList: null, //[{}],
     totalCount: 0,
     successfullyUploadedCount: 0,
     lastFile: '',
@@ -96,6 +102,11 @@ export default {
     },
     buttonCaption: function() {
       return this.isFinished ? 'Close' : 'Cancel';
+    },
+    errorsMessage() {
+      if (!this.errorsCount) return '';
+      const errors = this.errorsCount === 1 ? ' error' : ' errors';
+      return this.errorsCount + errors + ' while uploading, click for more info';
     }
   },
   created: function() {
@@ -142,11 +153,13 @@ export default {
       const file = this.files[fileId];
       file.processed = true;
       if (!error) {
-        this.lastFile = file.name;
         this.uploadedVolume += file.size;
-      } else file.error = error;
+      } else {
+        file.error = error;
+        this.errorsCount += 1;
+      }
+      this.lastFile = file.name;
       this.uploadedList.push(file);
-      //this.updateUI(file);
     },
     onCloseClick() {
       this.cancellationToken.set(true);
@@ -177,7 +190,7 @@ export default {
   -webkit-font-smoothing antialiased
   background-color #161A1F
   width 536px
-  padding 20px 30px
+  padding 30px 40px
 .gcp-dicom-uploader__exit
   cursor pointer
   float right
@@ -193,15 +206,24 @@ export default {
     background-color #52ABD3 !important
 .gcp-dicom-uploader__progress_block
   position relative
+  cursor pointer
 .gcp-dicom-uploader__status
   position absolute
   line-height 40px
   top 0
   width 100%
   font-size 14px
+  white-space nowrap
 .gcp-dicom-uploader__status-left
   float left
-  padding 0 12px
+  padding-right 12px
+  display flex
+  position relative
+.gcp-last-file
+  text-overflow ellipsis
+  overflow hidden
+  max-width 120px
+  min-width 120px
 .gcp-dicom-uploader__status-right
   float right
   padding 0 12px
@@ -218,4 +240,23 @@ export default {
   font-size 13px
   height 32px
   width 80px
+.gcp-status-icon
+  padding 2px 18px
+.gcp-icon-turned
+  transform rotate(90deg)
+  margin-top -2px
+.gcp-error-icon
+  padding-top 3px
+.gcp-dicom-uploader__error-message
+  position absolute
+  z-index -10
+  padding-left 45px
+  font-size 14px
+.gcp-dicom-uploader__progress_block.gcp-has-error
+  &:hover
+    background-color red
+    .gcp-last-file, .gcp-dicom-uploader__volume
+      z-index -10
+    .gcp-dicom-uploader__error-message
+      z-index 1
 </style>

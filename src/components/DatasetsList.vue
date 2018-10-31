@@ -2,14 +2,7 @@
   <md-table v-model="filteredDatasets" md-sort="name" md-sort-order="asc" md-card md-fixed-header>
 
     <md-table-toolbar>
-      <div class="md-toolbar-section-start">
-        <md-tabs>
-          <md-tab id="tab-home" md-label="Recent"></md-tab>
-          <md-tab id="tab-pages" md-label="All"></md-tab>
-        </md-tabs>
-      </div>
-
-      <md-field class="md-toolbar-section-end">
+      <md-field class="md-toolbar-section-search">
         <md-input placeholder="Search..." v-model="search" />
       </md-field>
       <div class="gcp-black-line"></div>

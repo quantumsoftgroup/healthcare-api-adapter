@@ -1,4 +1,16 @@
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+
 module.exports = {
+  configureWebpack: {
+    plugins: [
+      new UglifyJsPlugin({
+        uglifyOptions: {
+          compress: true
+        },
+        extractComments: true
+      })
+    ]
+  },
   chainWebpack: config => {
     const svgRule = config.module.rule('svg');
 

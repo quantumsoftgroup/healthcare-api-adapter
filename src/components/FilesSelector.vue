@@ -6,8 +6,8 @@
       <md-button class="gcp-files-selector__btn md-primary md-raised" @click="$refs.fileSelecor.click()">
         FILES UPLOAD
       </md-button>
-      <input ref="dirSelecor" class="gcp-invisible-input" type="file" webkitdirectory mozdirectory @change="onSelect($event.target.files)"/>
-      <input ref="fileSelecor" class="gcp-invisible-input" type="file"  multiple @change="onSelect($event.target.files)"/>
+      <input ref="dirSelecor" class="gcp-invisible-input" type="file" accept="DICOM files/dcm" webkitdirectory mozdirectory @change="onSelect($event.target.files)"/>
+      <input ref="fileSelecor" class="gcp-invisible-input" type="file" accept="DICOM files/*.dcm" multiple @change="onSelect($event.target.files)"/>
   </div>
 </template>
 
@@ -42,5 +42,8 @@ export default {
   z-index: -1000;
   max-width: 0 !important;
   max-height: 0 !important;
+}
+.gcp-hidden {
+  display: none;
 }
 </style>
