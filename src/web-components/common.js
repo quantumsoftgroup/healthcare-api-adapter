@@ -16,3 +16,4 @@ Vue.use(MdEmptyState);
 Vue.use(MdTable);
 Vue.use(MdField);
 Vue.use(MdProgress);
+

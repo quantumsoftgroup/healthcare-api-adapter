@@ -70,9 +70,6 @@ export default {
 </script>
 
 <style lang="stylus">
-@import '../../../node_modules/vue-material/dist/vue-material.min.css'
-@import '../../../node_modules/vue-material/dist/theme/default-dark.css'
-@import url('https://fonts.googleapis.com/css?family=Roboto')
 @import '../../components/common.styl'
 
 .gcp-picker

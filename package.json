@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "start": "vue-cli-service serve",
-    "build": "npm run build-components && npm run build-vue",
-    "build-components": "vue-cli-service build --target wc --name gcp ./src/web-components/**/*.vue",
+    "build": "npm run build-components && npm run build-vue && npm run post-build",
+    "build-components": "vue-cli-service build --target wc-async --name gcp ./src/web-components/**/*.vue",
     "build-vue": "webpack --mode production src/vue.js -o dist/vue.js",
+    "post-build": "node ./scripts/post-build.js",
     "lint": "vue-cli-service lint"
   },
   "files": [
@@ -16,8 +17,11 @@
   "devDependencies": {
     "@vue/cli-service": "^3.0.5",
     "dicomweb-client": "^0.3.2",
+    "fs-extra": "^7.0.1",
     "lodash.debounce": "^4.0.8",
+    "mv": "^2.1.1",
     "raw-loader": "^0.5.1",
+    "recursive-readdir": "^2.2.2",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "uglifyjs-webpack-plugin": "^2.0.1",

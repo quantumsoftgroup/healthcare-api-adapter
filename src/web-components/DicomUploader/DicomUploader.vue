@@ -1,22 +1,19 @@
 <template>
   <div class="gcp-dicom-uploader">
+    <div class="gcp-dicom-uploader__top">
+      <div class="gcp-dicom-uploader__uploading">
+        {{status}}
+        <span v-if="percents">{{percents}}%</span>
+        <div class="gcp-dicom-uploader__exit" @click="onCloseClick"/>
+      </div>
+    </div>
     <FilesSelector v-if="files == null" :onSelect="onSelectFiles"/>
     <div v-else>
-      <div class="gcp-dicom-uploader__top">
-        <div class="gcp-dicom-uploader__uploading">
-          {{status}}
-          <span v-if="percents">{{percents}}%</span>
-          <SvgIcon class="gcp-dicom-uploader__exit" :icon="require('./Icon-24px-Close.svg')" @click.native="onCloseClick"/>
-        </div>
-      </div>
       <div :class="['gcp-dicom-uploader__progress_block', {'gcp-has-error': errorsCount && isFilesListHidden}]" @click="isFilesListHidden = !isFilesListHidden">
         <md-progress-bar class="gcp-dicom-uploader__progress" md-mode="determinate" :md-value="percents"/>
         <div class="gcp-dicom-uploader__status">
           <div class="gcp-dicom-uploader__status-left">
-            <div class="gcp-status-icon">
-              <SvgIcon v-if="errorsCount" class="gcp-error-icon" :icon="require('./Icon-Warn.svg')"/>
-              <SvgIcon v-else :icon="require('./Icon-Arrow.svg')" :class="{'gcp-icon-turned': !isFilesListHidden}"/>
-            </div>
+            <div :class="['gcp-status-icon', statusIcon]"/>
             <span class="gcp-dicom-uploader__error-message">{{errorsMessage}}</span>
             <span class="gcp-last-file">{{lastFile}}</span>
             <span class="gcp-dicom-uploader__volume">
@@ -30,7 +27,7 @@
       </div>
       <UploaderFilesList :files="uploadedList" :isHidden="isFilesListHidden"/>
       <div class="gcp-dicom-uploader__bottom">
-        <md-button class="md-raised gcp-dicom-uploader__cancel-btn" @click="onButtonClick">{{buttonCaption}}</md-button>
+        <md-button class="gcp-dicom-uploader__cancel-btn" @click="onButtonClick">{{buttonCaption}}</md-button>
       </div>
     </div>
   </div>
@@ -38,7 +35,6 @@
 
 <script>
 import '../common.js';
-import SvgIcon from '../../components/SvgIcon';
 import FilesSelector from '../../components/FilesSelector';
 import UploaderFilesList from '../../components/UploaderFilesList';
 import dicomUploader from '../../services/DicomUploadService';
@@ -47,7 +43,7 @@ import { formatFileSize } from '../../utils/helpers';
 
 export default {
   name: 'DicomUploader',
-  components: { FilesSelector, UploaderFilesList, SvgIcon },
+  components: { FilesSelector, UploaderFilesList },
   props: {
     id: {
       type: String,
@@ -67,7 +63,7 @@ export default {
     }
   },
   data: () => ({
-    status: 'Uploading...',
+    status: 'Upload',
     isCancelled: false,
     errorsCount: 0,
     files: null,
@@ -82,31 +78,37 @@ export default {
     uploadContext: null // this is probably not needed, but we use this variable to destinguish between different downloads
   }),
   computed: {
-    filesLeft: function() {
+    filesLeft() {
       if (!this.totalCount) return '';
       return this.successfullyUploadedCount + ' of ' + this.totalCount;
     },
-    volumeLeft: function() {
+    volumeLeft() {
       if (!this.wholeVolumeStr) return '';
       let left = formatFileSize(this.uploadedVolume);
       if (left.indexOf(' ') >= 0 && left.split(' ')[1] === this.wholeVolumeStr.split(' ')[1])
         left = left.split(' ')[0];
       return left + ' of ' + this.wholeVolumeStr;
     },
-    percents: function() {
+    percents() {
       if (!this.files || !this.uploadedList) return 0;
       return parseInt((100 * this.uploadedList.length) / Object.keys(this.files).length);
     },
-    isFinished: function() {
+    isFinished() {
       return this.isCancelled || Object.keys(this.files).length === this.uploadedList.length;
     },
-    buttonCaption: function() {
+    buttonCaption() {
       return this.isFinished ? 'Close' : 'Cancel';
     },
     errorsMessage() {
       if (!this.errorsCount) return '';
       const errors = this.errorsCount === 1 ? ' error' : ' errors';
       return this.errorsCount + errors + ' while uploading, click for more info';
+    },
+    statusIcon() {
+      if (this.errorsCount) return 'gcp-error-icon';
+      let icon = 'gcp-status-icon';
+      if (!this.isFilesListHidden) icon += ' gcp-icon-turned';
+      return icon;
     }
   },
   created: function() {
@@ -129,6 +131,7 @@ export default {
         filesDict[i] = fileDesc;
         file.fileId = i;
       });
+      this.status = 'Uploading...';
       this.files = filesDict;
       this.uploadedList = [];
       this.uploadedVolume = 0;
@@ -162,7 +165,7 @@ export default {
       this.uploadedList.push(file);
     },
     onCloseClick() {
-      this.cancellationToken.set(true);
+      if (this.cancellationToken) this.cancellationToken.set(true);
       this.onClose();
     },
     onButtonClick() {
@@ -179,9 +182,6 @@ export default {
 </script>
 
 <style lang="stylus">
-@import '../../../node_modules/vue-material/dist/vue-material.min.css'
-@import '../../../node_modules/vue-material/dist/theme/default-dark.css'
-@import url('https://fonts.googleapis.com/css?family=Roboto')
 @import '../../components/common.styl'
 
 .gcp-dicom-uploader
@@ -190,12 +190,16 @@ export default {
   -webkit-font-smoothing antialiased
   background-color #161A1F
   width 536px
-  padding 30px 40px
+  padding 30px
 .gcp-dicom-uploader__exit
   cursor pointer
   float right
-  width 14px
-  height 14px
+  width 14px !important
+  height 14px !important
+  background-image url('./Icon-24px-Close.svg')
+  filter opacity(0.5)
+  &:hover
+    filter opacity(1)
 .gcp-dicom-uploader__uploading
   margin 5px 0 20px
   font-size 16px
@@ -233,24 +237,28 @@ export default {
 .gcp-dicom-uploader__bottom
   height 50px
 .gcp-dicom-uploader__cancel-btn
-  background-color #52ABD3 !important
   float right
   margin-top 20px
   text-transform none
   font-size 13px
   height 32px
   width 80px
+  background-color #52ABD3
 .gcp-status-icon
   padding 2px 18px
+  background-position center center
+  background-repeat no-repeat
+  background-image url('./Icon-Arrow.svg')
 .gcp-icon-turned
   transform rotate(90deg)
   margin-top -2px
 .gcp-error-icon
   padding-top 3px
+  background-image url('./Icon-Warn.svg')
 .gcp-dicom-uploader__error-message
   position absolute
   z-index -10
-  padding-left 45px
+  padding-left 38px
   font-size 14px
 .gcp-dicom-uploader__progress_block.gcp-has-error
   &:hover
