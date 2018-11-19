@@ -41,7 +41,7 @@ export default {
     filteredProjects: function() {
       if (!this.search || !this.projects) return this.projects;
       const str = this.search.toLowerCase();
-      return this.projects.filter(p => p.name.indexOf(str) >= 0);
+      return this.projects.filter(p => p.name.toLowerCase().indexOf(str) >= 0);
     }
   }
 };

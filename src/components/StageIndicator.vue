@@ -1,10 +1,10 @@
 <template>
   <div class="gcp-stage-indicator">
-    <div :class="['gcp-stage-block', {selected: project, active: stage === 0}]">
+    <div :class="['gcp-stage-block', {selected: project, active: stage === 0}]" @click="onProjectClick">
       <div v-if="project" class="gcp-stage-title">Project</div>
       <span>{{projectLabel}}</span>
     </div>
-    <div :class="['gcp-stage-block', {selected: dataset, active: stage === 1}]">
+    <div :class="['gcp-stage-block', {selected: dataset, active: stage === 1}]" @click="onDatasetClick">
       <div v-if="dataset" class="gcp-stage-title">Dataset</div>
       <span>{{datasetLabel}}</span>
     </div>
@@ -17,7 +17,9 @@ export default {
   name: 'ProjectsList',
   props: {
     project: Object,
-    dataset: Object
+    dataset: Object,
+    onProjectClick: Function,
+    onDatasetClick: Function
   },
   computed: {
     stage: function() {
@@ -58,6 +60,7 @@ export default {
   color #444444
   font-size 13px
   position relative
+  cursor pointer
   &.selected
     color #999999
   &.active

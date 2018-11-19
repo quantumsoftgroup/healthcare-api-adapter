@@ -48,7 +48,7 @@ export default {
     filteredStores: function() {
       if (!this.search || !this.stores) return this.stores;
       const str = this.search.toLowerCase();
-      return this.stores.filter(p => p.name.indexOf(str) >= 0);
+      return this.stores.filter(p => p.name.toLowerCase().indexOf(str) >= 0);
     }
   }
 };

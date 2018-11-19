@@ -5,7 +5,7 @@
   "scripts": {
     "start": "vue-cli-service serve",
     "build": "npm run build-components && npm run build-vue && npm run post-build",
-    "build-components": "vue-cli-service build --target wc-async --name gcp ./src/web-components/**/*.vue",
+    "build-components": "vue-cli-service build --modern --target wc-async --name gcp './src/web-components/**/*.vue'",
     "build-vue": "webpack --mode production src/vue.js -o dist/vue.js",
     "post-build": "node ./scripts/post-build.js",
     "lint": "vue-cli-service lint"
@@ -15,7 +15,7 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "@vue/cli-service": "^3.0.5",
+    "@vue/cli-service": "^3.1.4",
     "dicomweb-client": "^0.3.2",
     "fs-extra": "^7.0.1",
     "lodash.debounce": "^4.0.8",

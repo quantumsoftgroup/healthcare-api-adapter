@@ -5,6 +5,6 @@ const path = require('path');
 const distPath = path.join(__dirname, '../dist');
 const files = fs
   .readdirSync(distPath)
-  .filter(fn => fn.endsWith('.min.js') || fn.endsWith('.LICENSE'));
+  .filter(fn => /.*(\d+\.js)|(\.map)|(gcp\.js)|(\.html)/.test(fn));
 if (files.length) console.log('Removing: ' + files.join(', '));
 files.forEach(fn => fs.unlinkSync(path.join(distPath, fn)));

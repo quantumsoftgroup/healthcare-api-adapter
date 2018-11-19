@@ -196,7 +196,7 @@ export default {
   float right
   width 14px !important
   height 14px !important
-  background-image url('./Icon-24px-Close.svg')
+  background-image url('../../assets/Icon-24px-Close.svg')
   filter opacity(0.5)
   &:hover
     filter opacity(1)

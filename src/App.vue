@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <md-dialog class="gcp-picker-modal" v-if="path === '/picker'" :md-active="true">
-      <DatasetSelector id="dicom-store-picker" event="onSelect" oidc-key="googleOAuthToken"/>
+      <DatasetSelector id="dicom-store-picker" event="onSelect" oidc-key="googleOAuthToken" canClose/>
     </md-dialog>
     <md-dialog v-if="path === '/uploader'"  :md-active="true">
       <DicomUploader id="dicom-uploader" oidc-key="googleOAuthToken" :url="stowRsUrl" event="onClose"/>
