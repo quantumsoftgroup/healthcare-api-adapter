@@ -37,7 +37,7 @@ export default {
       this.error = response.message;
       return;
     }
-    this.stores = response.data.dicomStores;
+    this.stores = response.data.dicomStores || [];
   },
   methods: {}
 };

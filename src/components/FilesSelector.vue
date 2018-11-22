@@ -2,8 +2,8 @@
   <div class="gcp-files-selector">
       <md-button class="gcp-files-selector__btn-dir" @click="$refs.dirSelecor.click()"/>
       <md-button class="gcp-files-selector__btn-file" @click="$refs.fileSelecor.click()"/>
-      <input ref="dirSelecor" class="gcp-invisible-input" type="file" accept="DICOM files/dcm" webkitdirectory mozdirectory @change="onSelect($event.target.files)"/>
-      <input ref="fileSelecor" class="gcp-invisible-input" type="file" accept="DICOM files/*.dcm" multiple @change="onSelect($event.target.files)"/>
+      <input ref="dirSelecor" class="gcp-invisible-input" type="file" accept=".dcm" webkitdirectory mozdirectory @change="onSelect($event.target.files)"/>
+      <input ref="fileSelecor" class="gcp-invisible-input" type="file" accept=".dcm" multiple @change="onSelect($event.target.files)"/>
   </div>
 </template>
 

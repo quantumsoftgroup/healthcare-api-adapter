@@ -32,7 +32,7 @@ export default {
         this.error = r.message;
         return;
       }
-      this.projects = r.data.projects;
+      this.projects = r.data.projects || [];
     });
   },
   methods: {}

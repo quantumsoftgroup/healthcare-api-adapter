@@ -49,7 +49,7 @@ export default {
       this.error = datasetsResponse.message;
       return;
     }
-    this.datasets = datasetsResponse.data.datasets;
+    this.datasets = datasetsResponse.data.datasets || [];
   },
   methods: {}
 };
