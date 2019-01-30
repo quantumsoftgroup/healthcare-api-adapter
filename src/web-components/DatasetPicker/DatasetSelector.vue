@@ -2,9 +2,10 @@
   <div class="gcp-picker">
     <div class="gcp-dicom-picker__exit" v-if="canClose != undefined" @click="onClose"/>
     <div class="gcp-picker--title">Google Cloud Healthcare API</div>
-    <StageIndicator :project="project" :dataset="dataset" :onProjectClick="onProjectClick" :onDatasetClick="onDatasetClick"/>
+    <StageIndicator :project="project" :location="location" :dataset="dataset" :onProjectClick="onProjectClick" :onLocationClick="onLocationClick" :onDatasetClick="onDatasetClick"/>
     <ProjectPicker v-if="!project" :onSelect="onProjectSelect"/>
-    <DatasetPicker v-if="project && !dataset" :project="project" :onSelect="onDatasetSelect"/>
+    <LocationPicker v-if="project && !location" :project="project" :onSelect="onLocationSelect"/>
+    <DatasetPicker v-if="project && location && !dataset" :project="project" :location="location" :onSelect="onDatasetSelect"/>
     <DicomStorePicker v-if="project && dataset" :dataset="dataset" :onSelect="onDicomStoreSelect"/>
   </div>
 </template>
@@ -13,6 +14,7 @@
 import '../common.js';
 import api from '../../services/GoogleCloudApi';
 import StageIndicator from '../../components/StageIndicator.vue';
+import LocationPicker from '../../components/LocationPicker.vue';
 import ProjectPicker from '../../components/ProjectPicker.vue';
 import DatasetPicker from '../../components/DatasetPicker.vue';
 import DicomStorePicker from '../../components/DicomStorePicker.vue';
@@ -22,6 +24,7 @@ export default {
   components: {
     StageIndicator,
     ProjectPicker,
+    LocationPicker,
     DatasetPicker,
     DicomStorePicker
   },
@@ -43,6 +46,7 @@ export default {
   data: function() {
     return {
       project: null,
+      location: null,
       dataset: null,
       unloading: false
     };
@@ -54,12 +58,20 @@ export default {
     onProjectSelect(project) {
       this.project = project;
     },
+    onLocationSelect(location) {
+      this.location = location;
+    },
     onDatasetSelect(dataset) {
       this.dataset = dataset;
     },
     onProjectClick() {
       this.dataset = null;
+      this.location = null;
       this.project = null;
+    },
+    onLocationClick() {
+      this.dataset = null;
+      this.location = null;
     },
     onDatasetClick() {
       this.dataset = null;
@@ -93,7 +105,7 @@ export default {
   font-family 'Roboto', Helvetica, Arial, sans-serif
   box-sizing border-box
   -webkit-font-smoothing antialiased
-  width 600px
+  width 650px
   height 600px
   background-color #161A1F
   padding 20px 30px

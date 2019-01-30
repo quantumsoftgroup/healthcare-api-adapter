@@ -20,7 +20,6 @@ class GoogleCloudApi {
 
   async doRequest(url, config = {}) {
     let data = null;
-    let response = null;
     try {
       const response = await fetch(url, { ...this.fetchConfig, config });
       try {
@@ -63,25 +62,10 @@ class GoogleCloudApi {
     );
   }
 
-  async loadDatasets(projectId, locationsIds) {
-    const promises = locationsIds.map(locationId =>
-      this.doRequest(
-        `https://healthcare.googleapis.com/v1alpha/projects/${projectId}/locations/${locationId}/datasets`
-      )
+  async loadDatasets(projectId, locationId) {
+    return this.doRequest(
+      `https://healthcare.googleapis.com/v1alpha/projects/${projectId}/locations/${locationId}/datasets`
     );
-    return Promise.all(promises).then(replies => {
-      let datasets = [];
-      replies.forEach(r => {
-        if (r.isError) return r;
-        if (r.data.datasets) datasets = datasets.concat(r.data.datasets);
-      });
-      return {
-        status: 200,
-        data: {
-          datasets
-        }
-      };
-    });
   }
 
   async loadDicomStores(dataset) {

@@ -16,6 +16,10 @@ export default {
       type: Object,
       required: true
     },
+    location: {
+      type: Object,
+      required: true
+    },
     onSelect: {
       type: Function,
       required: true
@@ -25,33 +29,19 @@ export default {
     return {
       error: null,
       loading: false,
-      datasets: [],
-      locations: []
+      datasets: []
     };
   },
   created: async function() {
     this.loading = true;
-    const locationsResponse = await api.loadLocations(this.project.projectId);
-    if (locationsResponse.isError) {
-      this.loading = false;
-      this.error = locationsResponse.message;
-      return;
-    }
-    this.locations = locationsResponse.data.locations;
-    if (!this.locations) {
-      this.datasets = [];
-      this.loading = false;
-    }
-    const locationsIds = this.locations.map(o => o.locationId);
-    const datasetsResponse = await api.loadDatasets(this.project.projectId, locationsIds);
+    const datasetsResponse = await api.loadDatasets(this.project.projectId, this.location.locationId);
     this.loading = false;
     if (datasetsResponse.isError) {
       this.error = datasetsResponse.message;
       return;
     }
     this.datasets = datasetsResponse.data.datasets || [];
-  },
-  methods: {}
+  }
 };
 </script>
 
