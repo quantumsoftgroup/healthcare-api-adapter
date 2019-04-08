@@ -44,7 +44,7 @@ export default {
         sessionStorage.getItem('googleClientId') ||
         '570420945968-pmtd0sjm7mmf3i5m7ld09aos1op3qva1.apps.googleusercontent.com',
       stowRsUrl:
-        'https://healthcare.googleapis.com/v1alpha/projects/healthcare-api-215503/locations/us-central1/datasets/anton1/dicomStores/store2/dicomWeb'
+        'https://healthcare.googleapis.com/v1beta1/projects/healthcare-api-215503/locations/us-central1/datasets/anton1/dicomStores/store2/dicomWeb'
     };
   },
   computed: {

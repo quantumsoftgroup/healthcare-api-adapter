@@ -84,9 +84,9 @@ export default {
       const parts = dicomStore.split('/');
       this.unloading = true;
       const result = {
-        wadoUriRoot: `https://healthcare.googleapis.com/v1alpha/${dicomStore}/dicomWeb`,
-        qidoRoot: `https://healthcare.googleapis.com/v1alpha/${dicomStore}/dicomWeb`,
-        wadoRoot: `https://healthcare.googleapis.com/v1alpha/${dicomStore}/dicomWeb`,
+        wadoUriRoot: `https://healthcare.googleapis.com/v1beta1/${dicomStore}/dicomWeb`,
+        qidoRoot: `https://healthcare.googleapis.com/v1beta1/${dicomStore}/dicomWeb`,
+        wadoRoot: `https://healthcare.googleapis.com/v1beta1/${dicomStore}/dicomWeb`,
         project: parts[1],
         location: parts[3],
         dataset: parts[5],

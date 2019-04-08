@@ -58,18 +58,18 @@ class GoogleCloudApi {
 
   async loadLocations(projectId) {
     return this.doRequest(
-      `https://healthcare.googleapis.com/v1alpha/projects/${projectId}/locations`
+      `https://healthcare.googleapis.com/v1beta1/projects/${projectId}/locations`
     );
   }
 
   async loadDatasets(projectId, locationId) {
     return this.doRequest(
-      `https://healthcare.googleapis.com/v1alpha/projects/${projectId}/locations/${locationId}/datasets`
+      `https://healthcare.googleapis.com/v1beta1/projects/${projectId}/locations/${locationId}/datasets`
     );
   }
 
   async loadDicomStores(dataset) {
-    return this.doRequest(`https://healthcare.googleapis.com/v1alpha/${dataset}/dicomStores`);
+    return this.doRequest(`https://healthcare.googleapis.com/v1beta1/${dataset}/dicomStores`);
   }
 }
 
