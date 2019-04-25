@@ -18,25 +18,39 @@ class GoogleCloudApi {
     };
   }
 
-  async doRequest(url, config = {}) {
+  async doRequest(urlStr, config = {}, params = {}) {
+    var url = new URL(urlStr)
     let data = null;
+    url.search = new URLSearchParams(params)
+
     try {
       const response = await fetch(url, { ...this.fetchConfig, config });
       try {
         data = await response.json();
       } catch (err) {}
-      if (response.status >= 200 && response.status < 300 && data != null)
+      if (response.status >= 200 && response.status < 300 && data != null){ 
+        if(data.nextPageToken != null){
+            params.pageToken=data.nextPageToken;
+            let subPage = await this.doRequest(urlStr,config, params);
+            for (var key in data) {
+                if (data.hasOwnProperty(key)) {
+                    data[key] = data[key].concat(subPage.data[key]);
+                }
+            }
+        }
         return {
           isError: false,
           status: response.status,
           data: data
         };
-      else
+      }
+      else{
         return {
           isError: true,
           status: response.status,
           message: (data && data.error && data.error.message) || 'Unknown error'
         };
+    }
     } catch (err) {
       if (data && data.error) {
         return {
